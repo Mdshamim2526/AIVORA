@@ -1,0 +1,20 @@
+{
+  "name": "NEHA — বাংলা AI সহকারী",
+  "short_name": "NEHA",
+  "description": "বাংলা-প্রথম বহুভাষিক AI সহকারী",
+  "lang": "bn",
+  "dir": "ltr",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#101426",
+  "theme_color": "#101426",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ]
+}
