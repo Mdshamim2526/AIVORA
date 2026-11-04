@@ -1,25 +1,71 @@
 <!doctype html>
 <html lang="bn">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#101426">
-  <title>NEHA — বাংলা AI সহকারী</title>
-  <style>
-    *{box-sizing:border-box}body{margin:0;min-height:100vh;display:grid;place-items:center;padding:24px;background:#101426;color:#f7f5ff;font-family:system-ui,"Noto Sans Bengali",sans-serif}
-    main{width:min(680px,100%);padding:36px 24px;text-align:center;border:1px solid #34314f;border-radius:24px;background:linear-gradient(145deg,#211d3b,#17283a);box-shadow:0 24px 80px #0005}
-    .mark{width:76px;height:76px;margin:0 auto 18px;display:grid;place-items:center;border-radius:50%;background:linear-gradient(135deg,#b69cff,#72e6d7);color:#17152a;font-size:38px}
-    h1{margin:0;font-size:clamp(34px,8vw,54px);letter-spacing:3px}p{color:#c4c2d7;line-height:1.8}
-    .status{display:inline-block;margin-top:12px;padding:8px 14px;border:1px solid #454064;border-radius:99px;color:#8debdc;font-size:14px}
-  </style>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#101426">
+<title>NEHA — বাংলা AI সহকারী</title>
+<style>
+:root{color-scheme:dark;--bg:#101426;--panel:#1b2038;--line:#343b59;--text:#f7f5ff;--muted:#b6bad0;--accent:#b69cff;--mint:#72e6d7}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 15% 0%,#30264d 0,transparent 42%),var(--bg);color:var(--text);font-family:system-ui,"Noto Sans Bengali",sans-serif}
+.app{width:min(900px,100%);min-height:100vh;margin:auto;padding:20px;display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:13px;padding:12px 4px 20px;border-bottom:1px solid var(--line)}
+.logo{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:linear-gradient(135deg,var(--accent),var(--mint));color:#17152a;font-size:25px}
+h1{font-size:23px;letter-spacing:2px;margin:0}header p{margin:2px 0 0;color:var(--muted);font-size:13px}
+.pill{margin-left:auto;color:var(--mint);font-size:12px;border:1px solid #41665f;border-radius:99px;padding:7px 10px}
+main{flex:1;display:flex;flex-direction:column;gap:18px;padding:24px 0}
+.welcome{padding:22px;border:1px solid var(--line);border-radius:22px;background:linear-gradient(120deg,#282244,#1b3040)}
+.welcome h2{margin:0 0 7px;font-size:22px}.welcome p{margin:0;color:var(--muted);line-height:1.7}
+.actions{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.action{display:block;text-align:center;text-decoration:none;color:var(--text);padding:16px 8px;border:1px solid var(--line);border-radius:16px;background:var(--panel);font-size:14px}
+.action span{display:block;font-size:23px;margin-bottom:6px}
+.chat{display:flex;flex-direction:column;gap:10px;flex:1;min-height:150px}
+.msg{max-width:85%;padding:12px 15px;border-radius:17px;line-height:1.65;white-space:pre-wrap;overflow-wrap:anywhere}
+.bot{align-self:flex-start;background:#242943;border:1px solid var(--line)}.user{align-self:flex-end;background:#493b70}
+.composer{display:flex;gap:9px;padding:10px;border:1px solid var(--line);border-radius:18px;background:var(--panel)}
+textarea{flex:1;resize:vertical;min-height:46px;max-height:130px;border:0;outline:0;background:transparent;color:var(--text);font:inherit;padding:10px}
+button{border:0;border-radius:13px;padding:0 15px;background:var(--accent);color:#17152a;font:inherit;font-weight:700;cursor:pointer}
+button.secondary{background:#303751;color:var(--text)}button:disabled{opacity:.5;cursor:not-allowed}
+.note{color:var(--muted);font-size:12px;text-align:center;margin:9px 0 0}
+@media(max-width:560px){.app{padding:14px}.actions{grid-template-columns:1fr 1fr}.actions a:last-child{grid-column:1/-1}.welcome{padding:18px}.pill{font-size:11px}}
+</style>
 </head>
 <body>
-  <main>
-    <div class="mark" aria-hidden="true">✦</div>
-    <h1>NEHA</h1>
-    <p>তোমার বাংলা AI সহকারী</p>
-    <p>নতুন NEHA প্রজেক্টের ভিত্তি এখানে শুরু হচ্ছে।</p>
-    <span class="status">প্রস্তুতির পর্যায়ে</span>
-  </main>
+<div class="app">
+<header><div class="logo" aria-hidden="true">✦</div><div><h1>NEHA</h1><p>তোমার বাংলা সহকারী</p></div><span class="pill">প্রাথমিক সংস্করণ</span></header>
+<main>
+<section class="welcome"><h2>হ্যালো! আমি NEHA 💜</h2><p>এখান থেকে কথা বলা শুরু করো। মাইক্রোফোনে চাপ দিয়ে বাংলায় বলো, অথবা নিচে লিখে পাঠাও।</p></section>
+<section class="actions" aria-label="দ্রুত কাজ">
+<a class="action" href="https://www.youtube.com/" target="_blank" rel="noopener"><span>▶</span>ইউটিউব খোলো</a>
+<a class="action" href="https://www.youtube.com/results?search_query=বাংলা+গান" target="_blank" rel="noopener"><span>♫</span>গান খোঁজো</a>
+<a class="action" href="https://www.google.com/" target="_blank" rel="noopener"><span>⌕</span>ওয়েব সার্চ</a>
+</section>
+<section id="chat" class="chat" aria-live="polite">
+<div class="msg bot">হাই! 😊 আমি NEHA। ভয়েস ইনপুট ও দ্রুত ইউটিউব খোলার সুবিধা এখন পরীক্ষামূলকভাবে চালু আছে। AI উত্তর দেওয়ার সার্ভার এখনো যুক্ত করা হয়নি।</div>
+</section>
+<form id="chat-form" class="composer">
+<textarea id="chat-input" rows="1" placeholder="এখানে লিখে পাঠাও…" aria-label="মেসেজ লিখুন"></textarea>
+<button type="button" id="mic" class="secondary" aria-label="ভয়েস ইনপুট">🎙</button>
+<button type="submit">পাঠাও</button>
+</form>
+<p class="note" id="status">মাইক্রোফোন ব্যবহার করতে ব্রাউজারের অনুমতি লাগতে পারে।</p>
+</main>
+</div>
+<script>
+const form=document.getElementById('chat-form');
+const input=document.getElementById('chat-input');
+const chat=document.getElementById('chat');
+const status=document.getElementById('status');
+const mic=document.getElementById('mic');
+function addMessage(text,who){const el=document.createElement('div');el.className='msg '+who;el.textContent=text;chat.appendChild(el);el.scrollIntoView({behavior:'smooth',block:'nearest'});}
+form.addEventListener('submit',e=>{e.preventDefault();const text=input.value.trim();if(!text)return;addMessage(text,'user');input.value='';addMessage('তোমার মেসেজটি NEHA-তে নেওয়া হয়েছে। AI-এর আসল উত্তর চালু করতে নিরাপদ ব্যাকএন্ড ও AI API সংযোগ পরের ধাপে যোগ করতে হবে।','bot');});
+const SpeechRecognition=window.SpeechRecognition||window.webkitSpeechRecognition;
+if(SpeechRecognition){const recognition=new SpeechRecognition();recognition.lang='bn-BD';recognition.interimResults=false;recognition.maxAlternatives=1;
+mic.addEventListener('click',()=>{try{recognition.start();status.textContent='শুনছি… এখন বাংলায় বলো।';mic.disabled=true;}catch(e){status.textContent='মাইক্রোফোন চালু করা যায়নি। আবার চেষ্টা করো।';}});
+recognition.onresult=e=>{input.value=e.results[0][0].transcript;status.textContent='তোমার কথা লেখা হয়েছে। পাঠাতে চাপ দাও।';};
+recognition.onerror=e=>{status.textContent=e.error==='not-allowed'?'মাইক্রোফোনের অনুমতি দাও।':'ভয়েস ইনপুটে সমস্যা হয়েছে: '+e.error;};
+recognition.onend=()=>{mic.disabled=false;};
+}else{mic.disabled=true;status.textContent='এই ব্রাউজারে Web Speech ভয়েস ইনপুট সমর্থিত নয়। Chrome-এ চেষ্টা করো।';}
+</script>
 </body>
 </html>
