@@ -32,7 +32,8 @@ button{border:0;border-radius:13px;padding:0 15px;background:var(--accent);color
 </main></div>
 <script>
 const form=document.getElementById('chat-form'),input=document.getElementById('chat-input'),chat=document.getElementById('chat'),status=document.getElementById('status'),mic=document.getElementById('mic'),language=document.getElementById('language'),send=document.getElementById('send');
-const history=[];\nif('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
+const history=[];
+if('serviceWorker' in navigator && location.protocol.startsWith('http')){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}));}
 function addMessage(text,who){const el=document.createElement('div');el.className='msg '+who;el.textContent=text;chat.appendChild(el);el.scrollIntoView({behavior:'smooth',block:'nearest'});}
 function speak(text){if(!('speechSynthesis'in window)){status.textContent='এই ব্রাউজারে কণ্ঠে উত্তর দেওয়ার সুবিধা নেই।';return;}window.speechSynthesis.cancel();const utterance=new SpeechSynthesisUtterance(text);utterance.lang=language.value;const voices=window.speechSynthesis.getVoices();const prefix=language.value.toLowerCase().split('-')[0];const voice=voices.find(v=>v.lang.toLowerCase().startsWith(prefix));if(voice)utterance.voice=voice;utterance.onerror=()=>status.textContent='এই ভাষার কণ্ঠ ফোনে পাওয়া যায়নি।';window.speechSynthesis.speak(utterance);}
 document.getElementById('speak-test').addEventListener('click',()=>speak(language.value==='bn-BD'?'আমি নেহা। আমি বাংলায় কথা বলার চেষ্টা করছি।':'Hello. I am NEHA. This is a voice test.'));
