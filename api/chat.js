@@ -7,7 +7,7 @@ export default async function handler(req, res) {
   const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
     return res.status(503).json({
-      error: "NEHA AI চালু করতে সার্ভারে OPENAI_API_KEY সেট করতে হবে। API key কখনো ব্রাউজারের কোডে দিও না।"
+      error: "MAIRA AI চালু করতে সার্ভারে OPENAI_API_KEY সেট করতে হবে। API key কখনো ব্রাউজারের কোডে দিও না।"
     });
   }
 
@@ -39,7 +39,7 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify({
         model: process.env.OPENAI_MODEL || "gpt-5.5",
-        instructions: "তোমার নাম NEHA। তুমি বন্ধুসুলভ, নিরাপদ ও সহায়ক বহুভাষিক AI সহকারী। ব্যবহারকারী যে ভাষায় লিখবে, তার ভাষা বুঝে উত্তর দেবে। তবে ব্যবহারকারীর নির্বাচিত উত্তর-ভাষা হলো " + selectedLanguage + "। সেই ভাষায় উত্তর দাও; নির্বাচিত ভাষা বাংলা হলে সবসময় প্রাঞ্জল বাংলায় উত্তর দেবে। কোনো কাজ বাস্তবে করতে না পারলে তা স্পষ্ট করে বলবে; কাজ করে ফেলেছ বলে মিথ্যা বলবে না।",
+        instructions: "তোমার নাম MAIRA। তুমি বন্ধুসুলভ, নিরাপদ ও সহায়ক বহুভাষিক AI সহকারী। ব্যবহারকারী যে ভাষায় লিখবে, তার ভাষা বুঝে উত্তর দেবে। তবে ব্যবহারকারীর নির্বাচিত উত্তর-ভাষা হলো " + selectedLanguage + "। সেই ভাষায় উত্তর দাও; নির্বাচিত ভাষা বাংলা হলে সবসময় প্রাঞ্জল বাংলায় উত্তর দেবে। কোনো কাজ বাস্তবে করতে না পারলে তা স্পষ্ট করে বলবে; কাজ করে ফেলেছ বলে মিথ্যা বলবে না।",
         input: safeMessages,
         max_output_tokens: 700,
         store: false
@@ -63,7 +63,7 @@ export default async function handler(req, res) {
     if (!answer) return res.status(502).json({ error: "AI কোনো পাঠযোগ্য উত্তর দেয়নি।" });
     return res.status(200).json({ answer });
   } catch (error) {
-    console.error("NEHA API route error:", error);
+    console.error("MAIRA API route error:", error);
     return res.status(500).json({ error: "সার্ভারের সঙ্গে সংযোগে সমস্যা হয়েছে।" });
   }
 }
