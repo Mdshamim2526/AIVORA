@@ -1,6 +1,6 @@
-# NEHA
+# MAIRA
 
-NEHA is a Bengali-first, multilingual assistant web app.
+MAIRA is a Bengali-first, multilingual assistant web app.
 
 ## Current implementation
 
