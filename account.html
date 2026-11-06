@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="bn">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#160b27">
+  <title>MAIRA — Login / Signup</title>
+  <style>
+    :root{color-scheme:dark;--bg:#160b27;--panel:#29143f;--line:#75458f;--text:#fff7ff;--muted:#dec9eb;--accent:#c77dff}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;padding:20px;display:grid;place-items:center;background:radial-gradient(ellipse at 15% 0%,#512078,transparent 45%),var(--bg);color:var(--text);font-family:system-ui,"Noto Sans Bengali",sans-serif}
+    .card{width:min(440px,100%);padding:25px;border:1px solid var(--line);border-radius:22px;background:var(--panel);box-shadow:0 18px 55px #0005}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:22px}.logo{width:46px;height:46px;display:grid;place-items:center;border-radius:15px;background:linear-gradient(135deg,#a855f7,#ec4899);font-size:24px;font-weight:800}h1{font-size:23px;margin:0} .muted{color:var(--muted);font-size:14px;line-height:1.6}
+    .tabs{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:20px 0}.tabs button,button{border:0;border-radius:12px;padding:12px;font:inherit;font-weight:700;cursor:pointer}.tabs button{background:#43245d;color:var(--text)}.tabs button[aria-selected=true],.primary{background:var(--accent);color:#21102e}
+    label{display:block;margin:13px 0 6px;font-size:14px}input{width:100%;padding:13px;border:1px solid var(--line);border-radius:11px;background:#1c102b;color:var(--text);font:inherit}button.primary{width:100%;margin-top:18px}.link{display:block;margin:14px auto 0;background:none;color:var(--muted);text-decoration:underline;padding:7px}.status{margin-top:15px;padding:11px;border-radius:10px;background:#1d122b;color:var(--muted);font-size:13px;line-height:1.6;overflow-wrap:anywhere}.status:empty{display:none}.hidden{display:none!important}.account{padding:14px;border:1px solid var(--line);border-radius:13px;margin-top:18px}.back{display:inline-block;margin-top:16px;color:var(--muted)}
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="brand"><div class="logo">M</div><div><h1>MAIRA</h1><div class="muted">তোমার বাংলা সহকারী</div></div></div>
+    <p class="muted">তোমার MAIRA অ্যাকাউন্টে প্রবেশ করো অথবা নতুন অ্যাকাউন্ট তৈরি করো।</p>
+    <section id="auth-panel">
+      <div class="tabs" role="tablist" aria-label="অ্যাকাউন্ট">
+        <button id="login-tab" type="button" role="tab" aria-selected="true">লগইন</button>
+        <button id="signup-tab" type="button" role="tab" aria-selected="false">সাইন আপ</button>
+      </div>
+      <form id="auth-form">
+        <div id="name-wrap" class="hidden"><label for="display-name">তোমার নাম</label><input id="display-name" type="text" maxlength="50" autocomplete="name"></div>
+        <label for="email">ইমেইল</label><input id="email" type="email" required autocomplete="email" placeholder="name@example.com">
+        <label for="password">পাসওয়ার্ড</label><input id="password" type="password" required minlength="6" autocomplete="current-password" placeholder="কমপক্ষে ৬ অক্ষর">
+        <button class="primary" id="submit-button" type="submit">লগইন</button>
+      </form>
+      <button id="reset-button" class="link" type="button">পাসওয়ার্ড ভুলে গেছ?</button>
+    </section>
+    <section id="signed-in" class="account hidden">
+      <strong id="welcome"></strong>
+      <p class="muted">তুমি MAIRA-তে সফলভাবে লগইন করেছ।</p>
+      <button id="logout-button" class="primary" type="button">লগআউট</button>
+    </section>
+    <p id="status" class="status" role="status" aria-live="polite"></p>
+    <a class="back" href="./index.html">← MAIRA-তে ফিরে যাও</a>
+  </main>
+  <script type="module" src="./account.js"></script>
+</body>
+</html>
