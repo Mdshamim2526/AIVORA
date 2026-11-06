@@ -61,7 +61,7 @@ const uiText={
 function applyLanguageUI(){
  const t=uiText[language.value]||uiText["en-US"];
  document.querySelector('header p').textContent=t[0];
- settingsToggle.textContent='⚙️ '+t[1];
+ document.getElementById('settings-toggle').textContent='⚙️ '+t[1];
  document.querySelector('.welcome h2').textContent=t[2];
  document.querySelector('.welcome p').textContent=t[3];
  document.querySelector('.settings-title').textContent=t[4];
