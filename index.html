@@ -246,11 +246,11 @@ function userChats(){return collection(db,"users",activeUser.uid,"chats");}
 function renderChatList(){
  const term=chatSearch.value.trim().toLowerCase();
  chatList.replaceChildren();
- chatDocs.filter(item=>(item.title||"নতুন চ্যাট").toLowerCase().includes(term)).forEach(item=>{
+ chatDocs.filter(item=>(item.title||(language.value==="bn-BD"?"নতুন চ্যাট":"New chat")).toLowerCase().includes(term)).forEach(item=>{
   const row=document.createElement("div");row.className="chat-item"+(item.id===activeChatId?" active":"");
   const open=document.createElement("button");open.type="button";open.className="open-chat";open.textContent=item.title||"নতুন চ্যাট";open.addEventListener("click",()=>openSavedChat(item.id));
-  const rename=document.createElement("button");rename.type="button";rename.className="small-action";rename.textContent="✎";rename.title="নাম বদল";rename.addEventListener("click",async()=>{const title=prompt("চ্যাটের নতুন নাম লিখো:",item.title||"নতুন চ্যাট");if(title&&title.trim())await updateDoc(doc(userChats(),item.id),{title:title.trim().slice(0,80),updatedAt:serverTimestamp()});});
-  const remove=document.createElement("button");remove.type="button";remove.className="small-action";remove.textContent="×";remove.title="চ্যাট মুছুন";remove.addEventListener("click",async()=>{if(!confirm("এই চ্যাটটি মুছে ফেলবে?"))return;const messages=await getDocs(collection(userChats(),item.id,"messages"));for(const m of messages.docs)await deleteDoc(m.ref);await deleteDoc(doc(userChats(),item.id));if(activeChatId===item.id){activeChatId=null;chatArea.replaceChildren();}});
+  const rename=document.createElement("button");rename.type="button";rename.className="small-action";rename.textContent="✎";rename.title=language.value==="bn-BD"?"নাম বদল":"Rename";rename.addEventListener("click",async()=>{const title=prompt(language.value==="bn-BD"?"চ্যাটের নতুন নাম লিখো:":"Enter a new chat name:",item.title||(language.value==="bn-BD"?"নতুন চ্যাট":"New chat"));if(title&&title.trim())await updateDoc(doc(userChats(),item.id),{title:title.trim().slice(0,80),updatedAt:serverTimestamp()});});
+  const remove=document.createElement("button");remove.type="button";remove.className="small-action";remove.textContent="×";remove.title=language.value==="bn-BD"?"চ্যাট মুছুন":"Delete chat";remove.addEventListener("click",async()=>{if(!confirm(language.value==="bn-BD"?"এই চ্যাটটি মুছে ফেলবে?":"Delete this chat?"))return;const messages=await getDocs(collection(userChats(),item.id,"messages"));for(const m of messages.docs)await deleteDoc(m.ref);await deleteDoc(doc(userChats(),item.id));if(activeChatId===item.id){activeChatId=null;chatArea.replaceChildren();}});
   row.append(open,rename,remove);chatList.append(row);
  });
 }
@@ -263,9 +263,9 @@ async function startChatWorkspace(user){
 function stopChatWorkspace(){if(stopChatList)stopChatList();stopChatList=null;activeUser=null;activeChatId=null;workspace.style.display="none";chatDocs=[];chatList.replaceChildren();}
 async function createNewChat(){
  if(!activeUser)return;
- const ref=await addDoc(userChats(),{title:"নতুন চ্যাট",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+ const ref=await addDoc(userChats(),{title:language.value==="bn-BD"?"নতুন চ্যাট":"New chat",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
  activeChatId=ref.id;restoringChat=true;history.length=0;chatArea.replaceChildren();
- const greeting=document.createElement("div");greeting.className="msg bot";greeting.textContent="হাই! আমি MAIRA। কী নিয়ে কথা বলতে চাও?";chatArea.append(greeting);
+ const greeting=document.createElement("div");greeting.className="msg bot";greeting.textContent=language.value==="bn-BD"?"হাই! আমি MAIRA। কী নিয়ে কথা বলতে চাও?":"Hi! I’m MAIRA. What would you like to talk about?";chatArea.append(greeting);
  await new Promise(resolve=>setTimeout(resolve,0));restoringChat=false;renderChatList();document.getElementById("chat-input").focus();
 }
 async function openSavedChat(id){
@@ -273,7 +273,7 @@ async function openSavedChat(id){
  activeChatId=id;restoringChat=true;history.length=0;chatArea.replaceChildren();
  try{const snap=await getDocs(query(collection(userChats(),id,"messages"),orderBy("createdAt","asc")));
   snap.forEach(d=>{const m=d.data();if(m.content&&(m.role==="user"||m.role==="assistant"))history.push({role:m.role,content:m.content});const el=document.createElement("div");el.className="msg "+(m.role==="user"?"user":"bot");el.textContent=m.content||"";chatArea.append(el);});
-  if(!chatArea.children.length){const el=document.createElement("div");el.className="msg bot";el.textContent="এই চ্যাটে এখনো কোনো মেসেজ নেই।";chatArea.append(el);}
+  if(!chatArea.children.length){const el=document.createElement("div");el.className="msg bot";el.textContent=language.value==="bn-BD"?"এই চ্যাটে এখনো কোনো মেসেজ নেই।":"There are no messages in this chat yet.";chatArea.append(el);}
  }catch(error){document.getElementById("status").textContent="পুরোনো চ্যাট খোলা যায়নি: "+error.message;}
  await new Promise(resolve=>setTimeout(resolve,0));restoringChat=false;renderChatList();
 }
@@ -286,7 +286,7 @@ async function saveChatMessage(el){
   await addDoc(collection(userChats(),activeChatId,"messages"),{role,content,createdAt:serverTimestamp()});
   const ref=doc(userChats(),activeChatId);
   const current=chatDocs.find(c=>c.id===activeChatId);
-  const title=role==="user"&&(!current||current.title==="নতুন চ্যাট")?content.slice(0,42):((current&&current.title)||"নতুন চ্যাট");
+  const title=role==="user"&&(!current||current.title===(language.value==="bn-BD"?"নতুন চ্যাট":"New chat"))?content.slice(0,42):((current&&current.title)||(language.value==="bn-BD"?"নতুন চ্যাট":"New chat"));
   await updateDoc(ref,{title,updatedAt:serverTimestamp()});
  }catch(error){document.getElementById("status").textContent="চ্যাট সেভ হয়নি। Firestore Rules পরীক্ষা করো: "+error.message;}
 }
