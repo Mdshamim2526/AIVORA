@@ -238,18 +238,18 @@ function stopChatWorkspace(){if(stopChatList)stopChatList();stopChatList=null;ac
 async function createNewChat(){
  if(!activeUser)return;
  const ref=await addDoc(userChats(),{title:"নতুন চ্যাট",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
- activeChatId=ref.id;restoringChat=true;chatArea.replaceChildren();
+ activeChatId=ref.id;restoringChat=true;history.length=0;chatArea.replaceChildren();
  const greeting=document.createElement("div");greeting.className="msg bot";greeting.textContent="হাই! আমি MAIRA। কী নিয়ে কথা বলতে চাও?";chatArea.append(greeting);
- restoringChat=false;renderChatList();document.getElementById("chat-input").focus();
+ await new Promise(resolve=>setTimeout(resolve,0));restoringChat=false;renderChatList();document.getElementById("chat-input").focus();
 }
 async function openSavedChat(id){
  if(!activeUser)return;
- activeChatId=id;restoringChat=true;chatArea.replaceChildren();
+ activeChatId=id;restoringChat=true;history.length=0;chatArea.replaceChildren();
  try{const snap=await getDocs(query(collection(userChats(),id,"messages"),orderBy("createdAt","asc")));
   snap.forEach(d=>{const m=d.data();const el=document.createElement("div");el.className="msg "+(m.role==="user"?"user":"bot");el.textContent=m.content||"";chatArea.append(el);});
   if(!chatArea.children.length){const el=document.createElement("div");el.className="msg bot";el.textContent="এই চ্যাটে এখনো কোনো মেসেজ নেই।";chatArea.append(el);}
  }catch(error){document.getElementById("status").textContent="পুরোনো চ্যাট খোলা যায়নি: "+error.message;}
- restoringChat=false;renderChatList();
+ await new Promise(resolve=>setTimeout(resolve,0));restoringChat=false;renderChatList();
 }
 async function saveChatMessage(el){
  if(!activeUser||!activeChatId||restoringChat||observedMessages.has(el))return;
