@@ -39,6 +39,7 @@ main{display:none}
   <input id="auth-password" type="password" autocomplete="current-password" minlength="6" placeholder="পাসওয়ার্ড (কমপক্ষে ৬ অক্ষর)" required>
   <button type="submit" id="auth-submit">লগইন</button>
  </form>
+ <button type="button" id="google-login" class="secondary" style="width:100%;min-height:44px;margin-top:12px">Google দিয়ে চালিয়ে যাও</button>
  <div class="auth-actions"><button type="button" id="reset-password">পাসওয়ার্ড ভুলে গেছ?</button></div>
  <p class="auth-message" id="auth-message" role="status" aria-live="polite">Firebase সেটআপ সম্পন্ন হলে এখানে লগইন করা যাবে।</p>
 </section>
@@ -132,7 +133,7 @@ if(SpeechRecognition){const recognition=new SpeechRecognition();recognition.inte
 </script>
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
-import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile, signOut } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
 
 // Firebase Console > Project settings > Your apps > Web app config থেকে মানগুলো বসাও।
 // এগুলো public web-app config; কখনো service-account private key বা password এখানে দেবে না।
@@ -171,6 +172,20 @@ form.addEventListener("submit",async event=>{event.preventDefault();if(!auth){sh
  else{await signInWithEmailAndPassword(auth,emailField.value.trim(),passwordField.value);showMessage("লগইন সফল হয়েছে।");}}
  catch(error){const messages={"auth/email-already-in-use":"এই ইমেইলে আগে থেকেই অ্যাকাউন্ট আছে।","auth/invalid-email":"ইমেইল ঠিকানাটি সঠিক নয়।","auth/weak-password":"আরও শক্তিশালী পাসওয়ার্ড দাও (কমপক্ষে ৬ অক্ষর)।","auth/invalid-credential":"ইমেইল বা পাসওয়ার্ড মিলছে না।","auth/too-many-requests":"অনেকবার চেষ্টা হয়েছে। কিছুক্ষণ পরে আবার চেষ্টা করো।"};showMessage(messages[error.code]||"কাজটি সম্পন্ন হয়নি: "+error.message,true);}
  finally{submitButton.disabled=false;}
+});
+const googleButton=document.getElementById("google-login");
+googleButton.addEventListener("click",async()=>{
+ if(!auth){showMessage("Firebase সেটআপ সম্পূর্ণ হয়নি।",true);return;}
+ googleButton.disabled=true;showMessage("Google লগইন চালু হচ্ছে…");
+ try{
+  const provider=new GoogleAuthProvider();
+  provider.setCustomParameters({prompt:"select_account"});
+  await signInWithPopup(auth,provider);
+  showMessage("Google দিয়ে লগইন সফল হয়েছে।");
+ }catch(error){
+  const messages={"auth/popup-closed-by-user":"Google লগইন উইন্ডো বন্ধ করা হয়েছে।","auth/popup-blocked":"ব্রাউজার পপ-আপ আটকে দিয়েছে। পপ-আপ অনুমতি দিয়ে আবার চেষ্টা করো।","auth/unauthorized-domain":"এই ওয়েবসাইটের ডোমেইন Firebase Authentication-এর Authorized domains-এ যোগ করতে হবে।","auth/operation-not-allowed":"Firebase Console-এ Google sign-in provider চালু করতে হবে।","auth/account-exists-with-different-credential":"এই ইমেইলে অন্য পদ্ধতিতে অ্যাকাউন্ট আছে। আগে সেই পদ্ধতিতে লগইন করো।"};
+  showMessage(messages[error.code]||"Google লগইন সম্পন্ন হয়নি: "+error.message,true);
+ }finally{googleButton.disabled=false;}
 });
 document.getElementById("reset-password").addEventListener("click",async()=>{if(!auth){showMessage("আগে Firebase Web App config বসাতে হবে।",true);return;}const email=emailField.value.trim();if(!email){showMessage("আগে ইমেইল ঠিকানা লিখো।",true);emailField.focus();return;}try{await sendPasswordResetEmail(auth,email);showMessage("পাসওয়ার্ড রিসেটের লিংক ইমেইলে পাঠানো হয়েছে।");}catch(error){showMessage(error.message,true);}});
 document.getElementById("logout-button").addEventListener("click",async()=>{if(auth)try{await signOut(auth);}catch(error){showMessage(error.message,true);}});
