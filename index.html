@@ -246,7 +246,7 @@ async function openSavedChat(id){
  if(!activeUser)return;
  activeChatId=id;restoringChat=true;history.length=0;chatArea.replaceChildren();
  try{const snap=await getDocs(query(collection(userChats(),id,"messages"),orderBy("createdAt","asc")));
-  snap.forEach(d=>{const m=d.data();const el=document.createElement("div");el.className="msg "+(m.role==="user"?"user":"bot");el.textContent=m.content||"";chatArea.append(el);});
+  snap.forEach(d=>{const m=d.data();if(m.content&&(m.role==="user"||m.role==="assistant"))history.push({role:m.role,content:m.content});const el=document.createElement("div");el.className="msg "+(m.role==="user"?"user":"bot");el.textContent=m.content||"";chatArea.append(el);});
   if(!chatArea.children.length){const el=document.createElement("div");el.className="msg bot";el.textContent="এই চ্যাটে এখনো কোনো মেসেজ নেই।";chatArea.append(el);}
  }catch(error){document.getElementById("status").textContent="পুরোনো চ্যাট খোলা যায়নি: "+error.message;}
  await new Promise(resolve=>setTimeout(resolve,0));restoringChat=false;renderChatList();
