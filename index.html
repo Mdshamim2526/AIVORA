@@ -54,7 +54,7 @@ main{display:none}
  </form>
  <button type="button" id="google-login" class="secondary" style="width:100%;min-height:44px;margin-top:12px">Continue with Google</button>
  <div class="auth-actions"><button type="button" id="reset-password">Forgot password?</button></div>
- <p class="auth-message" id="auth-message" role="status" aria-live="polite">Firebase সেটআপ সম্পন্ন হলে এখানে লগইন করা যাবে।</p>
+ <p class="auth-message" id="auth-message" role="status" aria-live="polite">Sign in here after Firebase setup is complete.</p>
 </section>
 <div id="account-bar"><span id="account-email"></span><button type="button" id="logout-button">Log out</button></div>
 
@@ -152,10 +152,10 @@ function applyTheme(theme){const root=document.documentElement;if(theme==='light
 try{themeSetting.value=localStorage.getItem('maira-theme')||'purple';voiceSetting.value=localStorage.getItem('maira-voice')||'on';profileName.value=localStorage.getItem('maira-profile')||'';notificationsSetting.value=localStorage.getItem('maira-notifications')||'on';languageSetting.value=localStorage.getItem('maira-language')||'en-US';applyTheme(themeSetting.value);language.value=languageSetting.value;}catch(e){}
 applyLanguageUI();
 languageSetting.addEventListener('change',()=>{language.value=languageSetting.value;applyLanguageUI();try{localStorage.setItem('maira-language',languageSetting.value);}catch(e){}language.value=languageSetting.value;applyLanguageUI();});
-themeSetting.addEventListener('change',()=>{applyTheme(themeSetting.value);try{localStorage.setItem('maira-theme',themeSetting.value);}catch(e){}settingStatus.textContent='থিম আপডেট হয়েছে।';});
-voiceSetting.addEventListener('change',()=>{try{localStorage.setItem('maira-voice',voiceSetting.value);}catch(e){}settingStatus.textContent='Voice সেটিংস আপডেট হয়েছে।';});
-profileName.addEventListener('change',()=>{try{localStorage.setItem('maira-profile',profileName.value.trim());}catch(e){}settingStatus.textContent='প্রোফাইল নাম সংরক্ষিত হয়েছে।';});
-notificationsSetting.addEventListener('change',()=>{try{localStorage.setItem('maira-notifications',notificationsSetting.value);}catch(e){}settingStatus.textContent='Notification preference সংরক্ষিত হয়েছে।';});
+themeSetting.addEventListener('change',()=>{applyTheme(themeSetting.value);try{localStorage.setItem('maira-theme',themeSetting.value);}catch(e){}settingStatus.textContent=language.value==="bn-BD"?'থিম আপডেট হয়েছে।':'Theme updated.';});
+voiceSetting.addEventListener('change',()=>{try{localStorage.setItem('maira-voice',voiceSetting.value);}catch(e){}settingStatus.textContent=language.value==="bn-BD"?'ভয়েস সেটিংস আপডেট হয়েছে।':'Voice settings updated.';});
+profileName.addEventListener('change',()=>{try{localStorage.setItem('maira-profile',profileName.value.trim());}catch(e){}settingStatus.textContent=language.value==="bn-BD"?'প্রোফাইল নাম সংরক্ষিত হয়েছে।':'Profile name saved.';});
+notificationsSetting.addEventListener('change',()=>{try{localStorage.setItem('maira-notifications',notificationsSetting.value);}catch(e){}settingStatus.textContent=language.value==="bn-BD"?'নোটিফিকেশন পছন্দ সংরক্ষিত হয়েছে।':'Notification preference saved.';});
 document.getElementById('clear-chat').addEventListener('click',()=>{chat.innerHTML='<div class="msg bot"></div>';history.length=0;applyLanguageUI();settingStatus.textContent='এই সেশনের চ্যাট পরিষ্কার হয়েছে।';});
 const imageInput=document.getElementById('image-input'),imagePreview=document.getElementById('image-preview'),selectedImage=document.getElementById('selected-image'),imageName=document.getElementById('image-name');let selectedImageUrl=null;
 imageInput.addEventListener('change',()=>{const file=imageInput.files&&imageInput.files[0];if(!file)return;if(!file.type.startsWith('image/')){status.textContent='অনুগ্রহ করে একটি ছবি নির্বাচন করো।';imageInput.value='';return;}if(selectedImageUrl)URL.revokeObjectURL(selectedImageUrl);selectedImageUrl=URL.createObjectURL(file);selectedImage.src=selectedImageUrl;imageName.textContent=file.name;imagePreview.hidden=false;status.textContent='ছবি নির্বাচন হয়েছে। AI এডিটিং সংযোগ যোগ হলে নির্দেশ দিয়ে এডিট করা যাবে।';});
