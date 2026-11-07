@@ -25,6 +25,19 @@ main{display:none}
 .auth-form button{min-height:44px}.auth-message{min-height:24px;color:var(--muted);font-size:13px;overflow-wrap:anywhere}.auth-actions{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap}.auth-actions button{background:transparent;color:var(--mint);padding:7px 0;font-size:13px}
 #account-bar{display:none;align-items:center;gap:10px;margin-left:auto;font-size:12px;color:var(--muted)}#logout-button{padding:8px 10px}
 
+
+/* ChatGPT-style conversation workspace */
+.workspace{display:none;grid-template-columns:245px minmax(0,1fr);gap:16px;flex:1;min-height:0}
+.chat-sidebar{min-width:0;padding:12px;border:1px solid var(--line);border-radius:18px;background:var(--panel);display:flex;flex-direction:column;gap:10px}
+.chat-sidebar button{min-height:40px}
+.chat-sidebar input{width:100%;padding:10px;border:1px solid var(--line);border-radius:10px;background:#51296f;color:#fff;font:inherit}
+.chat-list{display:flex;flex-direction:column;gap:6px;overflow:auto;max-height:55vh}
+.chat-item{display:flex;align-items:center;gap:5px;padding:7px;border-radius:10px;background:#382052}
+.chat-item.active{outline:1px solid var(--accent)}
+.chat-item .open-chat{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left;background:transparent;color:var(--text);padding:7px;font-weight:500}
+.chat-item .small-action{padding:6px 8px;background:transparent;color:var(--muted);font-size:12px}
+.workspace main{min-width:0;padding-top:0}
+@media(max-width:650px){.workspace{grid-template-columns:1fr}.chat-sidebar{order:0}.chat-list{max-height:150px}.workspace main{order:1}}
 </style></head>
 <body><div class="app">
 <header><div class="logo" role="img" aria-label="MAIRA logo">M</div><div><h1>MAIRA</h1><p>তোমার বাংলা সহকারী</p></div><button type="button" class="settings-toggle" id="settings-toggle" aria-expanded="false" aria-controls="settings-panel">⚙️ সেটিংস</button></header>
@@ -45,7 +58,7 @@ main{display:none}
 </section>
 <div id="account-bar"><span id="account-email"></span><button type="button" id="logout-button">লগআউট</button></div>
 
-<main>
+<div class="workspace" id="workspace"><aside class="chat-sidebar" aria-label="চ্যাট তালিকা"><button type="button" id="new-chat">＋ নতুন চ্যাট</button><input id="chat-search" type="search" placeholder="চ্যাট খুঁজুন…" aria-label="চ্যাট খুঁজুন"><div id="chat-list" class="chat-list"></div><p class="note">তোমার চ্যাটগুলো Firestore-এ সংরক্ষিত হবে।</p></aside><main>
 <section class="welcome"><h2>হ্যালো! আমি MAIRA 💜</h2><p>MAIRA-র মূল ইন্টারফেস বাংলায় থাকবে। ভাষা নির্বাচন করে অন্য ভাষায় কথা বলার ইনপুট পরীক্ষা করতে পারো।</p></section>
 
 <section class="settings-panel" id="settings-panel" hidden>
@@ -64,7 +77,7 @@ main{display:none}
 <section id="chat" class="chat" aria-live="polite"><div class="msg bot">হাই! 😊 আমি MAIRA। ডিফল্ট ভাষা বাংলা। ভাষা বেছে মাইক্রোফোনে কথা বলার সুবিধা যোগ করা হয়েছে। AI সার্ভার সংযুক্ত করা হয়েছে; সার্ভার চালু ও API key সেট থাকলে প্রশ্নের উত্তর দিতে পারব।</div></section>
 <div id="image-preview" class="image-preview" hidden><img id="selected-image" alt="নির্বাচিত ছবির প্রিভিউ"><p id="image-name">ছবি নির্বাচন করা হয়েছে</p><button type="button" id="remove-image" class="secondary">সরাও</button></div><form id="chat-form" class="composer"><input id="image-input" type="file" accept="image/*" hidden><label class="image-pick" for="image-input">📷 ছবি বাছাই</label><textarea id="chat-input" rows="1" placeholder="এখানে লিখে পাঠাও…" aria-label="মেসেজ লিখুন"></textarea><button type="button" id="mic" class="secondary" aria-label="ভয়েস ইনপুট">🎙</button><button type="submit" id="send">পাঠাও</button></form>
 <p class="note" id="status">ভয়েস সুবিধা ব্রাউজার ও ফোনে থাকা ভাষার সাপোর্টের ওপর নির্ভর করে। মাইক্রোফোনের অনুমতি লাগতে পারে।</p>
-</main></div>
+</main></div></div>
 <script>
 const form=document.getElementById('chat-form'),input=document.getElementById('chat-input'),chat=document.getElementById('chat'),status=document.getElementById('status'),mic=document.getElementById('mic'),language=document.getElementById('language'),send=document.getElementById('send');
 
@@ -134,6 +147,7 @@ if(SpeechRecognition){const recognition=new SpeechRecognition();recognition.inte
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-app.js";
 import { getAuth, onAuthStateChanged, createUserWithEmailAndPassword, signInWithEmailAndPassword, sendPasswordResetEmail, updateProfile, signOut, GoogleAuthProvider, signInWithPopup } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-auth.js";
+import { getFirestore, collection, addDoc, getDocs, query, orderBy, doc, getDoc, setDoc, deleteDoc, serverTimestamp, onSnapshot, updateDoc } from "https://www.gstatic.com/firebasejs/10.14.1/firebase-firestore.js";
 
 // Firebase Console > Project settings > Your apps > Web app config থেকে মানগুলো বসাও।
 // এগুলো public web-app config; কখনো service-account private key বা password এখানে দেবে না।
@@ -156,6 +170,11 @@ const loginTab=document.getElementById("login-tab");
 const signupTab=document.getElementById("signup-tab");
 let mode="login";
 let auth=null;
+let db=null;
+let activeChatId=null;
+let stopChatList=null;
+let restoringChat=false;
+let observedMessages=new WeakSet();
 const configReady=Object.values(firebaseConfig).every(v=>typeof v==="string" && v.length>0 && !v.startsWith("PASTE_"));
 function showMessage(text,isError=false){message.textContent=text;message.style.color=isError?"#ffb4c2":"var(--muted)";}
 function setMode(next){mode=next;const signup=mode==="signup";nameField.hidden=!signup;nameField.required=signup;passwordField.autocomplete=signup?"new-password":"current-password";submitButton.textContent=signup?"অ্যাকাউন্ট তৈরি করো":"লগইন";loginTab.setAttribute("aria-pressed",String(!signup));signupTab.setAttribute("aria-pressed",String(signup));showMessage(signup?"নতুন অ্যাকাউন্টের জন্য নাম, ইমেইল ও পাসওয়ার্ড দাও।":"ইমেইল ও পাসওয়ার্ড দিয়ে লগইন করো।");}
@@ -163,8 +182,8 @@ loginTab.addEventListener("click",()=>setMode("login"));
 signupTab.addEventListener("click",()=>setMode("signup"));
 if(!configReady){showMessage("Firebase config এখনো বসানো হয়নি। index.html-এর firebaseConfig অংশে Firebase Web App-এর apiKey, authDomain, projectId ও appId বসাতে হবে।",true);}
 else{
- try{const app=initializeApp(firebaseConfig);auth=getAuth(app);
- onAuthStateChanged(auth,user=>{const signedIn=!!user;authShell.style.display=signedIn?"none":"block";main.style.display=signedIn?"flex":"none";accountBar.style.display=signedIn?"flex":"none";if(user)document.getElementById("account-email").textContent=user.displayName?user.displayName+" · "+user.email:user.email;});
+ try{const app=initializeApp(firebaseConfig);auth=getAuth(app);db=getFirestore(app);
+ onAuthStateChanged(auth,user=>{const signedIn=!!user;authShell.style.display=signedIn?"none":"block";main.style.display=signedIn?"flex":"none";accountBar.style.display=signedIn?"flex":"none";if(user){document.getElementById("account-email").textContent=user.displayName?user.displayName+" · "+user.email:user.email;startChatWorkspace(user);}else{stopChatWorkspace();}});
  }catch(error){showMessage("Firebase চালু করা যায়নি: "+error.message,true);}
 }
 form.addEventListener("submit",async event=>{event.preventDefault();if(!auth){showMessage("আগে Firebase Web App config বসাতে হবে।",true);return;}submitButton.disabled=true;
@@ -189,6 +208,67 @@ googleButton.addEventListener("click",async()=>{
 });
 document.getElementById("reset-password").addEventListener("click",async()=>{if(!auth){showMessage("আগে Firebase Web App config বসাতে হবে।",true);return;}const email=emailField.value.trim();if(!email){showMessage("আগে ইমেইল ঠিকানা লিখো।",true);emailField.focus();return;}try{await sendPasswordResetEmail(auth,email);showMessage("পাসওয়ার্ড রিসেটের লিংক ইমেইলে পাঠানো হয়েছে।");}catch(error){showMessage(error.message,true);}});
 document.getElementById("logout-button").addEventListener("click",async()=>{if(auth)try{await signOut(auth);}catch(error){showMessage(error.message,true);}});
+
+const workspace=document.getElementById("workspace");
+const chatList=document.getElementById("chat-list");
+const chatSearch=document.getElementById("chat-search");
+const chatArea=document.getElementById("chat");
+const newChatButton=document.getElementById("new-chat");
+let activeUser=null;
+let chatDocs=[];
+function userChats(){return collection(db,"users",activeUser.uid,"chats");}
+function renderChatList(){
+ const term=chatSearch.value.trim().toLowerCase();
+ chatList.replaceChildren();
+ chatDocs.filter(item=>(item.title||"নতুন চ্যাট").toLowerCase().includes(term)).forEach(item=>{
+  const row=document.createElement("div");row.className="chat-item"+(item.id===activeChatId?" active":"");
+  const open=document.createElement("button");open.type="button";open.className="open-chat";open.textContent=item.title||"নতুন চ্যাট";open.addEventListener("click",()=>openSavedChat(item.id));
+  const rename=document.createElement("button");rename.type="button";rename.className="small-action";rename.textContent="✎";rename.title="নাম বদল";rename.addEventListener("click",async()=>{const title=prompt("চ্যাটের নতুন নাম লিখো:",item.title||"নতুন চ্যাট");if(title&&title.trim())await updateDoc(doc(userChats(),item.id),{title:title.trim().slice(0,80),updatedAt:serverTimestamp()});});
+  const remove=document.createElement("button");remove.type="button";remove.className="small-action";remove.textContent="×";remove.title="চ্যাট মুছুন";remove.addEventListener("click",async()=>{if(!confirm("এই চ্যাটটি মুছে ফেলবে?"))return;const messages=await getDocs(collection(userChats(),item.id,"messages"));for(const m of messages.docs)await deleteDoc(m.ref);await deleteDoc(doc(userChats(),item.id));if(activeChatId===item.id){activeChatId=null;chatArea.replaceChildren();}});
+  row.append(open,rename,remove);chatList.append(row);
+ });
+}
+async function startChatWorkspace(user){
+ activeUser=user;workspace.style.display="grid";
+ if(stopChatList)stopChatList();
+ stopChatList=onSnapshot(query(userChats(),orderBy("updatedAt","desc")),snapshot=>{chatDocs=snapshot.docs.map(d=>({id:d.id,...d.data()}));renderChatList();},error=>{document.getElementById("status").textContent="চ্যাট তালিকা লোড হয়নি: "+error.message;});
+ if(!activeChatId){const first=await getDocs(query(userChats(),orderBy("updatedAt","desc")));if(!first.empty)await openSavedChat(first.docs[0].id);else await createNewChat();}
+}
+function stopChatWorkspace(){if(stopChatList)stopChatList();stopChatList=null;activeUser=null;activeChatId=null;workspace.style.display="none";chatDocs=[];chatList.replaceChildren();}
+async function createNewChat(){
+ if(!activeUser)return;
+ const ref=await addDoc(userChats(),{title:"নতুন চ্যাট",createdAt:serverTimestamp(),updatedAt:serverTimestamp()});
+ activeChatId=ref.id;restoringChat=true;chatArea.replaceChildren();
+ const greeting=document.createElement("div");greeting.className="msg bot";greeting.textContent="হাই! আমি MAIRA। কী নিয়ে কথা বলতে চাও?";chatArea.append(greeting);
+ restoringChat=false;renderChatList();document.getElementById("chat-input").focus();
+}
+async function openSavedChat(id){
+ if(!activeUser)return;
+ activeChatId=id;restoringChat=true;chatArea.replaceChildren();
+ try{const snap=await getDocs(query(collection(userChats(),id,"messages"),orderBy("createdAt","asc")));
+  snap.forEach(d=>{const m=d.data();const el=document.createElement("div");el.className="msg "+(m.role==="user"?"user":"bot");el.textContent=m.content||"";chatArea.append(el);});
+  if(!chatArea.children.length){const el=document.createElement("div");el.className="msg bot";el.textContent="এই চ্যাটে এখনো কোনো মেসেজ নেই।";chatArea.append(el);}
+ }catch(error){document.getElementById("status").textContent="পুরোনো চ্যাট খোলা যায়নি: "+error.message;}
+ restoringChat=false;renderChatList();
+}
+async function saveChatMessage(el){
+ if(!activeUser||!activeChatId||restoringChat||observedMessages.has(el))return;
+ observedMessages.add(el);
+ const role=el.classList.contains("user")?"user":"assistant";
+ const content=el.textContent.trim();if(!content)return;
+ try{
+  await addDoc(collection(userChats(),activeChatId,"messages"),{role,content,createdAt:serverTimestamp()});
+  const ref=doc(userChats(),activeChatId);
+  const current=chatDocs.find(c=>c.id===activeChatId);
+  const title=role==="user"&&(!current||current.title==="নতুন চ্যাট")?content.slice(0,42):((current&&current.title)||"নতুন চ্যাট");
+  await updateDoc(ref,{title,updatedAt:serverTimestamp()});
+ }catch(error){document.getElementById("status").textContent="চ্যাট সেভ হয়নি। Firestore Rules পরীক্ষা করো: "+error.message;}
+}
+const messageObserver=new MutationObserver(records=>{for(const record of records)for(const node of record.addedNodes)if(node.nodeType===1&&node.classList.contains("msg"))saveChatMessage(node);});
+messageObserver.observe(chatArea,{childList:true});
+newChatButton.addEventListener("click",createNewChat);
+chatSearch.addEventListener("input",renderChatList);
+
 </script>
 
 </body></html>
